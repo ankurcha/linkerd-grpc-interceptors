@@ -1,5 +1,7 @@
 # linkerd-grpc-interceptors
 
+[ ![Download](https://api.bintray.com/packages/ankurcha/maven/linkerd-grpc-interceptors/images/download.svg) ](https://bintray.com/ankurcha/maven/linkerd-grpc-interceptors/_latestVersion)
+
 Special thanks to: 
 
 *Spencer Fang* - https://groups.google.com/forum/#!topic/grpc-io/Eke0FzdY9go
