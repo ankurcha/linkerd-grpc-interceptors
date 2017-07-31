@@ -1,0 +1,19 @@
+group 'com.malloc64.grpc.linkerd'
+version '1.0.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'io.grpc:grpc-core:1.5.0'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'io.grpc:grpc-testing:1.5.0'
+    testCompile 'io.grpc:grpc-testing-proto:1.5.0'
+}
