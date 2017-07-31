@@ -5,6 +5,7 @@ plugins {
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java'
+apply plugin: 'com.jfrog.bintray'
 
 group 'com.malloc64.grpc.linkerd'
 version '1.0.0'
@@ -15,6 +16,7 @@ targetCompatibility = 1.7
 repositories {
     mavenCentral()
     maven { url "http://dl.bintray.com/ankurcha/maven" }
+    jcenter()
 }
 
 dependencies {
@@ -44,45 +46,12 @@ artifacts {
     archives sourcesJar, javadocJar
 }
 
-// Create the pom configuration:
-def pomConfig = {
-    licenses {
-        license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            distribution 'https://github.com/ankurcha/linkerd-grpc-interceptors'
-        }
-    }
-    developers {
-        developer {
-            id 'ankurcha'
-            name "Ankur Chauhan"
-            email "ankur@malloc64.com"
-        }
-    }
-
-    scm {
-        url "https://github.com/ankurcha/linkerd-grpc-interceptors"
-    }
-}
-
-// Create the publication with the pom configuration:
 publishing {
     publications {
-        MyPublication(MavenPublication) {
+        mavenJava(MavenPublication) {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-            groupId 'com.malloc64'
-            artifactId 'linkerd-grpc-interceptors'
-            version '1.0.0'
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', 'Linkerd header propagation interceptors for Grpc')
-                root.appendNode('name', 'linkerd-grpc-interceptors')
-                root.appendNode('url', 'https://github.com/ankurcha/linkerd-grpc-interceptors')
-                root.children().last() + pomConfig
-            }
         }
     }
 }
@@ -91,31 +60,33 @@ publishing {
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['MyPublication']
+    publications = ['mavenJava']
+    dryRun = false
+    publish = true
 
     pkg {
-        repo = 'generic'
+        repo = 'maven'
         name = 'linkerd-grpc-interceptors'
-        userOrg = user
-        licenses = ['Apache-2.0']
+        desc = 'Linkerd header propagating interceptors for grpc'
+        websiteUrl = 'https://github.com/ankurcha/linkerd-grpc-interceptors'
+        issueTrackerUrl = 'https://github.com/ankurcha/linkerd-grpc-interceptors/issues'
         vcsUrl = 'https://github.com/ankurcha/linkerd-grpc-interceptors.git'
+        licenses = ['Apache-2.0']
         labels = ['grpc', 'linkerd', 'interceptors', 'grpc-java']
         publicDownloadNumbers = true
         attributes = ['grpcVersion': '1.5.0']
 
         version {
-            name = '1.0.0-Final'
-            desc = 'Linkerd header propagating interceptors for grpc'
+            name = project.version
             released  = new Date()
             vcsTag = '1.0.0'
             attributes = ['grpcVersion': '1.5.0']
+            mavenCentralSync {
+                sync = false //Optional (true by default). Determines whether to sync the version to Maven Central.
+                user = 'ossUser' //OSS user token
+                password = 'ossUserPassword' //OSS user password
+                close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+            }
         }
     }
-
-//    mavenCentralSync {
-//        sync = false //Optional (true by default). Determines whether to sync the version to Maven Central.
-//        user = System.getenv('OSS_USER') //OSS user token
-//        password = System.getenv('OSS_PASS') //OSS user password
-//        close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
-//    }
 }
