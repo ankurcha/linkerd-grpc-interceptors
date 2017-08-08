@@ -15,7 +15,7 @@ public class L5dServerInterceptor implements ServerInterceptor {
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
         final Metadata l5d = new Metadata();
         for (String name : headers.keys()) {
-            if (!name.startsWith(L5D_HEADER_PREFIX)) {
+            if (!name.toLowerCase().startsWith(L5D_HEADER_PREFIX)) {
                 continue;
             }
             Metadata.Key<String> key = Metadata.Key.of(name, Metadata.ASCII_STRING_MARSHALLER);
